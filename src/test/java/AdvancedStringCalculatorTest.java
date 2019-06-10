@@ -33,6 +33,13 @@ class AdvancedStringCalculatorTest {
         assertThatProperResultWasReturned(" 3*7*3*2", 126);
     }
 
+    @Test
+    void shouldRealizeOperationWithBrackets() {
+        assertThatProperResultWasReturned("( 1 +   2.5) * 3^2", 31.5);
+        assertThatProperResultWasReturned("((2.4-0.4) * 3)^2", 36);
+        assertThatProperResultWasReturned("((2.4-(0.4 + 1)) * 3)^2", 9);
+    }
+
     private void assertThatProperResultWasReturned(String operation, double expectedResult) {
         assertEquals(calculator.calculate(operation), expectedResult);
     }
