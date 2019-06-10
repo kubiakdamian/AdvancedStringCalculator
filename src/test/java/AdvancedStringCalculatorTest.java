@@ -26,8 +26,9 @@ class AdvancedStringCalculatorTest {
     }
 
     @Test
-    void shouldRealizeComplexOperation() {
+    void shouldRealizeCompoundOperation() {
         assertThatProperResultWasReturned(" 1 +   2.5 * 3", 8.5);
+        assertThatProperResultWasReturned(" 1 +   2.5 * 3^2", 23.5);
         assertThatProperResultWasReturned("5^2+3", 28);
         assertThatProperResultWasReturned(" 3*7*3*2", 126);
     }
