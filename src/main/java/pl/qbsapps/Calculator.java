@@ -16,6 +16,7 @@ public class Calculator {
         }
 
         operation = operation.replaceAll("\\s+", "");
+        checkIfTwoOperandsAppearSideBySide(operation);
         checkIfOperationContainsInvalidNumbers(operation);
         checkIfBracketsInOperationAreValid(operation);
 
@@ -100,6 +101,18 @@ public class Calculator {
             throw new InvalidOperationException("An extra left parenthesis detected");
         } else if (countOccurrencesOfCharacter(operation, '(') < countOccurrencesOfCharacter(operation, ')')) {
             throw new InvalidOperationException("An extra right parenthesis detected");
+        }
+    }
+
+    private void checkIfTwoOperandsAppearSideBySide(String operation) {
+        String signs;
+
+        for (int i = 0; i < operation.length() - 2; i++) {
+            signs = operation.substring(i, i + 2);
+
+            if (signs.matches("[-+*/^]+")){
+                throw new InvalidOperationException("Missing number between " + signs.charAt(0) + " and " + signs.charAt(1) + " operators");
+            }
         }
     }
 
