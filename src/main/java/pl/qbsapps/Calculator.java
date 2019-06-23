@@ -2,81 +2,53 @@ package pl.qbsapps;
 
 public class Calculator {
     private static final String REGEX = "[-+*/^]";
+    private RPN rpn = new RPN();
 
     public double calculate(String operation) {
+        if (operation == null || operation.equals("")) {
+            throw new IllegalArgumentException("Invalid input");
+        }
+
         operation = operation.replaceAll("\\s+", "");
 
         while (operation.contains("(")) {
             operation = removeMiddleBrackets(operation);
         }
 
-        return RPN.compute(operation);
+        return rpn.compute(operation);
     }
 
     private String removeMiddleBrackets(String operation) {
-        String insideBracketsResult = operation.substring(operation.lastIndexOf("(") + 1, operation.indexOf(")"));
+        int indexOfOpeningBracket = operation.lastIndexOf("(") + 1;
+
+        String tempString = operation.substring(indexOfOpeningBracket);
+
+        int indexOfClosingBracket = tempString.indexOf(")");
+
+        String insideBracketsResult = tempString.substring(0, indexOfClosingBracket);
+
         String[] numbers;
         double result = 0;
 
-        char operand = findOperand(insideBracketsResult);
         numbers = insideBracketsResult.split(REGEX);
+        String firstNumber = numbers[0];
+        String secondNumber = numbers[1];
 
-        switch (operand) {
-            case '+':
-                result = add(Double.parseDouble(numbers[0]), Double.parseDouble(numbers[1]));
-                break;
-            case '-':
-                result = subtract(Double.parseDouble(numbers[0]), Double.parseDouble(numbers[1]));
-                break;
-            case '*':
-                result = multiply(Double.parseDouble(numbers[0]), Double.parseDouble(numbers[1]));
-                break;
-            case '/':
-                result = divide(Double.parseDouble(numbers[0]), Double.parseDouble(numbers[1]));
-                break;
-            case '^':
-                result = raiseToPower(Double.parseDouble(numbers[0]), Double.parseDouble(numbers[1]));
-                break;
+        if (isNumber(firstNumber) && isNumber(secondNumber)) {
+            result = rpn.compute(insideBracketsResult);
         }
 
-        operation = operation.replace(operation.substring(operation.lastIndexOf("("), operation.indexOf(")") + 1), String.valueOf(result));
+        operation = operation.replace(operation.substring(indexOfOpeningBracket - 1, indexOfClosingBracket + indexOfOpeningBracket + 1), String.valueOf(result));
 
         return operation;
     }
 
-    private double add(double firstNumber, double secondNumber) {
-        return firstNumber + secondNumber;
-    }
-
-    private double subtract(double firstNumber, double secondNumber) {
-        return firstNumber - secondNumber;
-    }
-
-    private double multiply(double firstNumber, double secondNumber) {
-        return firstNumber * secondNumber;
-    }
-
-    private double divide(double firstNumber, double secondNumber) {
-        return firstNumber / secondNumber;
-    }
-
-    private double raiseToPower(double firstNumber, double secondNumber) {
-        return Math.pow(firstNumber, secondNumber);
-    }
-
-    private char findOperand(String operation) {
-        if (operation.contains("+")) {
-            return '+';
-        } else if (operation.contains("-")) {
-            return '-';
-        } else if (operation.contains("*")) {
-            return '*';
-        } else if (operation.contains("/")) {
-            return '/';
-        } else if (operation.contains("^")) {
-            return '^';
+    private boolean isNumber(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-
-        return 'e';
     }
 }

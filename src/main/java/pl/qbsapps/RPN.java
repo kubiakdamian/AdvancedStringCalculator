@@ -1,5 +1,7 @@
 package pl.qbsapps;
 
+import pl.qbsapps.exception.DivisionByZeroException;
+
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.HashMap;
@@ -8,7 +10,7 @@ import java.util.Map;
 import java.util.Stack;
 
 class RPN {
-    static double compute(String expr) throws
+    double compute(String expr) throws
             ArithmeticException,
             EmptyStackException {
 
@@ -36,6 +38,11 @@ class RPN {
                     break;
                 case "/":
                     double divisor = stack.pop();
+
+                    if(divisor == 0) {
+                        throw new DivisionByZeroException();
+                    }
+
                     stack.push(stack.pop() / divisor);
                     break;
                 case "^":
@@ -51,7 +58,7 @@ class RPN {
         return stack.pop();
     }
 
-    private static String[] convertInfixToRPN(String[] infixNotation) {
+    private String[] convertInfixToRPN(String[] infixNotation) {
         Map<String, Integer> operands = new HashMap<>();
         operands.put("/", 5);
         operands.put("*", 5);
@@ -98,7 +105,7 @@ class RPN {
         }
     }
 
-    private static String[] removeEmptyChars(String[] operands) {
+    private String[] removeEmptyChars(String[] operands) {
         List<String> operandsList = new ArrayList<>();
 
         for (String operand : operands) {
@@ -113,8 +120,7 @@ class RPN {
         return stockArr;
     }
 
-    //We will get number without brackets
-    private static String[] combineTwoArrays(String[] numbers, String[] operands) {
+    private String[] combineTwoArrays(String[] numbers, String[] operands) {
         ArrayList<String> combined = new ArrayList<>();
 
         for (int i = 0; i < numbers.length; i++) {
@@ -130,7 +136,7 @@ class RPN {
         return stockArr;
     }
 
-    private static String convertArrayToString(String[] array) {
+    private String convertArrayToString(String[] array) {
         StringBuilder builder = new StringBuilder();
 
         for (String element : array) {

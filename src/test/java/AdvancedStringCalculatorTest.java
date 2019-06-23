@@ -1,7 +1,9 @@
 import org.junit.jupiter.api.Test;
 import pl.qbsapps.Calculator;
+import pl.qbsapps.exception.DivisionByZeroException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AdvancedStringCalculatorTest {
 
@@ -34,10 +36,24 @@ class AdvancedStringCalculatorTest {
     }
 
     @Test
+    void shouldReturnDivisionByZeroException() {
+        assertThatResultThrowsDivisionByZeroException("1 / 0");
+        assertThatResultThrowsDivisionByZeroException("1 / (1-1)");
+        assertThatResultThrowsDivisionByZeroException("1 / ( 3 * 0)");
+        assertThatResultThrowsDivisionByZeroException("1+ 1/ (2 - 2)");
+    }
+
+    private void assertThatResultThrowsDivisionByZeroException(String operation) {
+        assertThrows(DivisionByZeroException.class, () -> calculator.calculate(operation));
+    }
+
+    @Test
     void shouldRealizeOperationWithBrackets() {
         assertThatProperResultWasReturned("( 1 +   2.5) * 3^2", 31.5);
         assertThatProperResultWasReturned("((2.4-0.4) * 3)^2", 36);
         assertThatProperResultWasReturned("((2.4-(0.4 + 1)) * 3)^2", 9);
+        assertThatProperResultWasReturned("(1+1)*(2+2)", 8);
+        assertThatProperResultWasReturned("((2+2*(2+2))*(3*(2+2)))*3", 360);
     }
 
     private void assertThatProperResultWasReturned(String operation, double expectedResult) {
