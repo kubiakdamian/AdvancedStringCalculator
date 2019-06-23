@@ -53,7 +53,17 @@ class AdvancedStringCalculatorTest {
         assertThatProperResultWasReturned("((2.4-0.4) * 3)^2", 36);
         assertThatProperResultWasReturned("((2.4-(0.4 + 1)) * 3)^2", 9);
         assertThatProperResultWasReturned("(1+1)*(2+2)", 8);
+        assertThatProperResultWasReturned("((2.4 - 0.4) * 3)^4", 1296);
         assertThatProperResultWasReturned("((2+2*(2+2))*(3*(2+2)))*3", 360);
+    }
+
+    @Test
+    void shouldRealizeOperationWithPercentage() {
+        assertThatProperResultWasReturned("2*75%", 1.5);
+        assertThatProperResultWasReturned("2*150%", 3);
+        assertThatProperResultWasReturned("2*10000%", 200);
+        assertThatProperResultWasReturned("(1+1)*50%", 1);
+        assertThatProperResultWasReturned("((2+2*(2+2))*(3*75%))*3", 67.5);
     }
 
     private void assertThatProperResultWasReturned(String operation, double expectedResult) {

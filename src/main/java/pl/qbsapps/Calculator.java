@@ -1,5 +1,8 @@
 package pl.qbsapps;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Calculator {
     private static final String REGEX = "[-+*/^]";
     private RPN rpn = new RPN();
@@ -10,6 +13,10 @@ public class Calculator {
         }
 
         operation = operation.replaceAll("\\s+", "");
+
+        while (operation.contains("%")) {
+            operation = removePercentage(operation);
+        }
 
         while (operation.contains("(")) {
             operation = removeMiddleBrackets(operation);
@@ -41,6 +48,35 @@ public class Calculator {
         operation = operation.replace(operation.substring(indexOfOpeningBracket - 1, indexOfClosingBracket + indexOfOpeningBracket + 1), String.valueOf(result));
 
         return operation;
+    }
+
+    private String removePercentage(String operation) {
+        int indexOfPercentage = operation.indexOf("%") + 1;
+
+        String tempString = operation.substring(0, indexOfPercentage);
+
+        tempString = getLastNumberFromString(tempString);
+
+        int indexOfNumber = indexOfPercentage - tempString.length();
+
+        double convertedNumber = Double.parseDouble(tempString) / 100;
+        tempString = String.valueOf(convertedNumber);
+
+        operation = operation.replace(operation.substring(indexOfNumber - 1, indexOfPercentage), tempString);
+
+        return operation;
+    }
+
+    private String getLastNumberFromString(String operation) {
+        Pattern p = Pattern.compile("[0-9]+");
+        Matcher m = p.matcher(operation);
+        String result = "";
+
+        while (m.find()) {
+            result = m.group();
+        }
+
+        return result;
     }
 
     private boolean isNumber(String str) {
