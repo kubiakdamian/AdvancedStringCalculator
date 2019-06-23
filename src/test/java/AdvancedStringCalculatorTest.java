@@ -1,9 +1,11 @@
 import org.junit.jupiter.api.Test;
 import pl.qbsapps.Calculator;
 import pl.qbsapps.exception.DivisionByZeroException;
+import pl.qbsapps.exception.InvalidOperationException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AdvancedStringCalculatorTest {
 
@@ -36,7 +38,7 @@ class AdvancedStringCalculatorTest {
     }
 
     @Test
-    void shouldReturnDivisionByZeroException() {
+    void shouldThrowDivisionByZeroException() {
         assertThatResultThrowsDivisionByZeroException("1 / 0");
         assertThatResultThrowsDivisionByZeroException("1 / (1-1)");
         assertThatResultThrowsDivisionByZeroException("1 / ( 3 * 0)");
@@ -46,6 +48,19 @@ class AdvancedStringCalculatorTest {
     private void assertThatResultThrowsDivisionByZeroException(String operation) {
         assertThrows(DivisionByZeroException.class, () -> calculator.calculate(operation));
     }
+
+    @Test
+    void shouldThrowInvalidOperationException() {
+        assertThatResultThrowsInvalidOperationException("2a*3", "Invalid number detected: 2a");
+        assertThatResultThrowsInvalidOperationException("((2.4-(0.4 + 1#as)) * 3)^2", "Invalid number detected: 1#as");
+        assertThatResultThrowsInvalidOperationException("((2.4-(0.4 + vd1)) * 3)^2", "Invalid number detected: vd1");
+    }
+
+    private void assertThatResultThrowsInvalidOperationException(String operation, String expectedMessage) {
+        InvalidOperationException invalidOperationException = assertThrows(InvalidOperationException.class, () -> calculator.calculate(operation));
+        assertTrue(invalidOperationException.getMessage().contains(expectedMessage));
+    }
+
 
     @Test
     void shouldRealizeOperationWithBrackets() {

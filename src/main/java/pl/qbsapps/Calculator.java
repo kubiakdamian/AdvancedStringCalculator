@@ -1,5 +1,7 @@
 package pl.qbsapps;
 
+import pl.qbsapps.exception.InvalidOperationException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +15,7 @@ public class Calculator {
         }
 
         operation = operation.replaceAll("\\s+", "");
+        checkIfOperationIsCorrect(operation);
 
         while (operation.contains("%")) {
             operation = removePercentage(operation);
@@ -77,6 +80,17 @@ public class Calculator {
         }
 
         return result;
+    }
+
+    private void checkIfOperationIsCorrect(String operation) {
+        operation = operation.replaceAll("[()%]", "");
+        String[] numbers = operation.split(REGEX);
+
+        for(String number : numbers) {
+            if(!isNumber(number)) {
+                throw new InvalidOperationException("Invalid number detected: " + number);
+            }
+        }
     }
 
     private boolean isNumber(String str) {
