@@ -1,5 +1,6 @@
 package pl.qbsapps;
 
+import com.google.common.base.CharMatcher;
 import pl.qbsapps.exception.InvalidOperationException;
 
 import java.util.regex.Matcher;
@@ -15,7 +16,8 @@ public class Calculator {
         }
 
         operation = operation.replaceAll("\\s+", "");
-        checkIfOperationIsCorrect(operation);
+        checkIfOperationContainsInvalidNumbers(operation);
+        checkIfBracketsInOperationAreValid(operation);
 
         while (operation.contains("%")) {
             operation = removePercentage(operation);
@@ -82,14 +84,22 @@ public class Calculator {
         return result;
     }
 
-    private void checkIfOperationIsCorrect(String operation) {
+    private void checkIfOperationContainsInvalidNumbers(String operation) {
         operation = operation.replaceAll("[()%]", "");
         String[] numbers = operation.split(REGEX);
 
-        for(String number : numbers) {
-            if(!isNumber(number)) {
+        for (String number : numbers) {
+            if (!isNumber(number)) {
                 throw new InvalidOperationException("Invalid number detected: " + number);
             }
+        }
+    }
+
+    private void checkIfBracketsInOperationAreValid(String operation) {
+        if (countOccurrencesOfCharacter(operation, '(') > countOccurrencesOfCharacter(operation, ')')) {
+            throw new InvalidOperationException("An extra left parenthesis detected");
+        } else if (countOccurrencesOfCharacter(operation, '(') < countOccurrencesOfCharacter(operation, ')')) {
+            throw new InvalidOperationException("An extra right parenthesis detected");
         }
     }
 
@@ -100,5 +110,9 @@ public class Calculator {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private int countOccurrencesOfCharacter(String operation, char symbol) {
+        return CharMatcher.is(symbol).countIn(operation);
     }
 }

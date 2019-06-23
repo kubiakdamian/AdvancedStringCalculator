@@ -54,6 +54,8 @@ class AdvancedStringCalculatorTest {
         assertThatResultThrowsInvalidOperationException("2a*3", "Invalid number detected: 2a");
         assertThatResultThrowsInvalidOperationException("((2.4-(0.4 + 1#as)) * 3)^2", "Invalid number detected: 1#as");
         assertThatResultThrowsInvalidOperationException("((2.4-(0.4 + vd1)) * 3)^2", "Invalid number detected: vd1");
+        assertThatResultThrowsInvalidOperationException("2* (3.4 + 6))", "An extra right parenthesis detected");
+        assertThatResultThrowsInvalidOperationException("2* ((3.4 + 6)", "An extra left parenthesis detected");
     }
 
     private void assertThatResultThrowsInvalidOperationException(String operation, String expectedMessage) {
