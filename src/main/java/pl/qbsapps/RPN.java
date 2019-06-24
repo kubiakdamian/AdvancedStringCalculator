@@ -17,11 +17,11 @@ class RPN {
         Stack<Double> stack = new Stack<>();
         expr = expr.replaceAll("\\s+", "");
 
-        String[] temp1 = expr.split("[-+*/^]");
-        String[] temp2 = expr.split("[\\d.]");
-        temp2 = removeEmptyChars(temp2);
+        String[] numbers = expr.split("[-+*/^]");
+        String[] operands = expr.split("[\\d.]");
+        operands = removeEmptyChars(operands);
 
-        String[] combinedData = combineTwoArrays(temp1, temp2);
+        String[] combinedData = combineTwoArrays(numbers, operands);
         String[] dataConvertedToRPN = convertInfixToRPN(combinedData);
         String finalString = convertArrayToString(dataConvertedToRPN);
 
@@ -38,11 +38,9 @@ class RPN {
                     break;
                 case "/":
                     double divisor = stack.pop();
-
-                    if(divisor == 0) {
-                        throw new DivisionByZeroException();
+                    if (divisor == 0) {
+                        throw new DivisionByZeroException("Division by zero");
                     }
-
                     stack.push(stack.pop() / divisor);
                     break;
                 case "^":
@@ -66,7 +64,7 @@ class RPN {
         operands.put("-", 4);
         operands.put("^", 6);
 
-        ArrayList<String> L = new ArrayList<>();
+        List<String> L = new ArrayList<>();
         Stack<String> S = new Stack<>();
 
         for (String token : infixNotation) {
@@ -77,19 +75,15 @@ class RPN {
                 S.push(token);
                 continue;
             }
-
             if (isNumber(token)) {
                 L.add(token);
                 continue;
             }
-
             throw new IllegalArgumentException("Invalid input");
         }
-
         while (!S.isEmpty()) {
             L.add(S.pop());
         }
-
         String[] stockArr = new String[L.size()];
         stockArr = L.toArray(stockArr);
 
@@ -107,13 +101,11 @@ class RPN {
 
     private String[] removeEmptyChars(String[] operands) {
         List<String> operandsList = new ArrayList<>();
-
         for (String operand : operands) {
             if (!operand.equals("")) {
                 operandsList.add(operand);
             }
         }
-
         String[] stockArr = new String[operandsList.size()];
         stockArr = operandsList.toArray(stockArr);
 
@@ -121,15 +113,13 @@ class RPN {
     }
 
     private String[] combineTwoArrays(String[] numbers, String[] operands) {
-        ArrayList<String> combined = new ArrayList<>();
-
+        List<String> combined = new ArrayList<>();
         for (int i = 0; i < numbers.length; i++) {
             combined.add(numbers[i]);
             if (i < operands.length) {
                 combined.add(operands[i]);
             }
         }
-
         String[] stockArr = new String[combined.size()];
         stockArr = combined.toArray(stockArr);
 
@@ -138,7 +128,6 @@ class RPN {
 
     private String convertArrayToString(String[] array) {
         StringBuilder builder = new StringBuilder();
-
         for (String element : array) {
             builder.append(element).append(" ");
         }

@@ -31,6 +31,8 @@ class AdvancedStringCalculatorTest {
 
     @Test
     void shouldRealizeCompoundOperation() {
+        assertThatProperResultWasReturned("2 + 2 * 4", 10);
+        assertThatProperResultWasReturned("2 + 2 + 4", 8);
         assertThatProperResultWasReturned(" 1 +   2.5 * 3", 8.5);
         assertThatProperResultWasReturned(" 1 +   2.5 * 3^2", 23.5);
         assertThatProperResultWasReturned("5^2+3", 28);
@@ -39,14 +41,10 @@ class AdvancedStringCalculatorTest {
 
     @Test
     void shouldThrowDivisionByZeroException() {
-        assertThatResultThrowsDivisionByZeroException("1 / 0");
-        assertThatResultThrowsDivisionByZeroException("1 / (1-1)");
-        assertThatResultThrowsDivisionByZeroException("1 / ( 3 * 0)");
-        assertThatResultThrowsDivisionByZeroException("1+ 1/ (2 - 2)");
-    }
-
-    private void assertThatResultThrowsDivisionByZeroException(String operation) {
-        assertThrows(DivisionByZeroException.class, () -> calculator.calculate(operation));
+        assertThatResultThrowsDivisionByZeroException("1 / 0", "Division by zero");
+        assertThatResultThrowsDivisionByZeroException("1 / (1-1)", "Division by zero");
+        assertThatResultThrowsDivisionByZeroException("1 / ( 3 * 0)", "Division by zero");
+        assertThatResultThrowsDivisionByZeroException("1+ 1/ (2 - 2)", "Division by zero");
     }
 
     @Test
@@ -60,14 +58,9 @@ class AdvancedStringCalculatorTest {
         assertThatResultThrowsInvalidOperationException("1+2*3 /^ 3", "Missing number between / and ^ operators");
     }
 
-    private void assertThatResultThrowsInvalidOperationException(String operation, String expectedMessage) {
-        InvalidOperationException invalidOperationException = assertThrows(InvalidOperationException.class, () -> calculator.calculate(operation));
-        assertTrue(invalidOperationException.getMessage().contains(expectedMessage));
-    }
-
-
     @Test
     void shouldRealizeOperationWithBrackets() {
+        assertThatProperResultWasReturned("((2 + 2 + 2) * 5)", 30);
         assertThatProperResultWasReturned("( 1 +   2.5) * 3^2", 31.5);
         assertThatProperResultWasReturned("((2.4-0.4) * 3)^2", 36);
         assertThatProperResultWasReturned("((2.4-(0.4 + 1)) * 3)^2", 9);
@@ -87,5 +80,15 @@ class AdvancedStringCalculatorTest {
 
     private void assertThatProperResultWasReturned(String operation, double expectedResult) {
         assertEquals(calculator.calculate(operation), expectedResult);
+    }
+
+    private void assertThatResultThrowsDivisionByZeroException(String operation, String expectedMessage) {
+        DivisionByZeroException divisionByZeroException = assertThrows(DivisionByZeroException.class, () -> calculator.calculate(operation));
+        assertTrue(divisionByZeroException.getMessage().contains(expectedMessage));
+    }
+
+    private void assertThatResultThrowsInvalidOperationException(String operation, String expectedMessage) {
+        InvalidOperationException invalidOperationException = assertThrows(InvalidOperationException.class, () -> calculator.calculate(operation));
+        assertTrue(invalidOperationException.getMessage().contains(expectedMessage));
     }
 }

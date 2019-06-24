@@ -23,7 +23,6 @@ public class Calculator {
         while (operation.contains("%")) {
             operation = removePercentage(operation);
         }
-
         while (operation.contains("(")) {
             operation = removeMiddleBrackets(operation);
         }
@@ -33,41 +32,40 @@ public class Calculator {
 
     private String removeMiddleBrackets(String operation) {
         int indexOfOpeningBracket = operation.lastIndexOf("(") + 1;
-
         String tempString = operation.substring(indexOfOpeningBracket);
-
         int indexOfClosingBracket = tempString.indexOf(")");
-
         String insideBracketsResult = tempString.substring(0, indexOfClosingBracket);
-
-        String[] numbers;
+        String[] numbers = insideBracketsResult.split(REGEX);
         double result = 0;
 
-        numbers = insideBracketsResult.split(REGEX);
-        String firstNumber = numbers[0];
-        String secondNumber = numbers[1];
-
-        if (isNumber(firstNumber) && isNumber(secondNumber)) {
+        if (checkIfAllElementsAreNumbers(numbers)) {
             result = rpn.compute(insideBracketsResult);
         }
-
         operation = operation.replace(operation.substring(indexOfOpeningBracket - 1, indexOfClosingBracket + indexOfOpeningBracket + 1), String.valueOf(result));
 
         return operation;
     }
 
+    private boolean checkIfAllElementsAreNumbers(String[] array) {
+        boolean hasAllNumbers = true;
+
+        for (String number : array) {
+            if (!isNumber(number)) {
+                hasAllNumbers = false;
+                break;
+            }
+        }
+
+        return hasAllNumbers;
+    }
+
     private String removePercentage(String operation) {
         int indexOfPercentage = operation.indexOf("%") + 1;
-
         String tempString = operation.substring(0, indexOfPercentage);
-
         tempString = getLastNumberFromString(tempString);
-
         int indexOfNumber = indexOfPercentage - tempString.length();
-
         double convertedNumber = Double.parseDouble(tempString) / 100;
         tempString = String.valueOf(convertedNumber);
-
         operation = operation.replace(operation.substring(indexOfNumber - 1, indexOfPercentage), tempString);
 
         return operation;
@@ -77,7 +75,6 @@ public class Calculator {
         Pattern p = Pattern.compile("[0-9]+");
         Matcher m = p.matcher(operation);
         String result = "";
-
         while (m.find()) {
             result = m.group();
         }
@@ -88,7 +85,6 @@ public class Calculator {
     private void checkIfOperationContainsInvalidNumbers(String operation) {
         operation = operation.replaceAll("[()%]", "");
         String[] numbers = operation.split(REGEX);
-
         for (String number : numbers) {
             if (!isNumber(number)) {
                 throw new InvalidOperationException("Invalid number detected: " + number);
@@ -106,11 +102,9 @@ public class Calculator {
 
     private void checkIfTwoOperandsAppearSideBySide(String operation) {
         String signs;
-
         for (int i = 0; i < operation.length() - 2; i++) {
             signs = operation.substring(i, i + 2);
-
-            if (signs.matches("[-+*/^]+")){
+            if (signs.matches("[-+*/^]+")) {
                 throw new InvalidOperationException("Missing number between " + signs.charAt(0) + " and " + signs.charAt(1) + " operators");
             }
         }
